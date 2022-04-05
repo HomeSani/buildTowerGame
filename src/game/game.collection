@@ -1,44 +1,4 @@
 name: "game"
-instances {
-  id: "tower_block"
-  prototype: "/src/game/go/tower_block.go"
-  position {
-    x: 337.0
-    y: 467.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 3.0
-    y: 3.0
-    z: 1.0
-  }
-}
-instances {
-  id: "tower_block1"
-  prototype: "/src/game/go/tower_block.go"
-  position {
-    x: 441.0
-    y: 815.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 3.0
-    y: 3.0
-    z: 1.0
-  }
-}
 scale_along_z: 0
 embedded_instances {
   id: "game_manager"

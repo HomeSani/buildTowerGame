@@ -1,7 +1,8 @@
 function create_tower_block(self)
-	self.tower_block = factory.create("/tower_factory#factory", self.spawn_pos, nil, nil, vmath.vector3(3, 3, 1))
-	msg.post(msg.url("game", self.tower_block, "collisionobject"), "disable")
-	go.animate(self.tower_block, "position.x", go.PLAYBACK_LOOP_PINGPONG, 600, go.EASING_LINEAR, 4)
+	local tower_block = factory.create("/tower_factory#factory", self.spawn_pos, nil, nil, vmath.vector3(3, 3, 1))
+	go.animate(tower_block, "position.x", go.PLAYBACK_LOOP_PINGPONG, 600, go.EASING_LINEAR, 4)
+
+	return tower_block
 end
 
 function init(self)
@@ -10,13 +11,21 @@ function init(self)
 
 	self.score = 0
 	self.spawn_pos = vmath.vector3(0, 400, 0)
+
+	self.tower_block = create_tower_block(self)
 end
 
 function on_input(self, action_id, action)
 	if action_id == hash("touch") and action.pressed then
+		self.spawn_pos.y = go.get_position(self.tower_block).y + 150
 		
+		go.cancel_animations(self.tower_block, "position.x")
+		msg.post(self.tower_block, "start_falling")
 	end
 end
 
 function on_message(self, message_id, message, sender)
+	if message_id == hash("tower_is_stand") then
+		self.tower_block = create_tower_block(self)
+	end	
 end

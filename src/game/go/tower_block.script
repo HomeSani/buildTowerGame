@@ -3,7 +3,7 @@ function init(self)
 	self.position = go.get_position()
 	self.velocity = vmath.vector3(0, 0, 0)
 
-	self.gravity = -5
+	self.gravity = 0
 end
 
 function final(self)
@@ -23,10 +23,19 @@ end
 
 -- TODO сделать ещё один коллайдер сверху для проверки на stand!!!
 function on_message(self, message_id, message, sender)
-	if message_id == hash("collision_response") then
+	if message_id == hash("start_falling") then
+		self.gravity = -5
+	end
+	
+	if message_id == hash("collision_response") and self.is_stand == false then
 		self.is_stand = true
 		self.gravity = 0
 		self.velocity = go.get_position()
+
+		msg.post("/game_manager#game_manager", "tower_is_stand")
+
+		local block_pos = go.get_position()
+		local last_block_pos = go.get_position(message.other_id)
 	end
 end
 
