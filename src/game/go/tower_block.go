@@ -40,7 +40,7 @@ embedded_components {
   "type: COLLISION_OBJECT_TYPE_KINEMATIC\n"
   "mass: 0.0\n"
   "friction: 1.0\n"
-  "restitution: 0.0\n"
+  "restitution: 100.0\n"
   "group: \"default\"\n"
   "mask: \"default\"\n"
   "embedded_collision_shape {\n"

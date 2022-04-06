@@ -1,5 +1,5 @@
 function create_tower_block(self)
-	local tower_block = factory.create("/tower_factory#factory", self.spawn_pos, nil, nil, vmath.vector3(3, 3, 1))
+	local tower_block = factory.create("/tower_factory#factory", self.spawn_pos, nil, nil, vmath.vector3(2.6, 2.6, 2.6))
 	go.animate(tower_block, "position.x", go.PLAYBACK_LOOP_PINGPONG, 600, go.EASING_LINEAR, 4)
 
 	return tower_block
