@@ -1,11 +1,38 @@
+function check_and_start_tower_fall(self, block_pos, last_block_pos)
+	if block_pos.x < last_block_pos.x - self.stand_offset then
+		go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, 220, go.EASING_LINEAR, 1.8)
+		go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, block_pos.x - self.stand_offset/2.5, go.EASING_LINEAR, 0.2)
+		go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 3, 0.3)
+
+		return false
+	end
+
+	if block_pos.x > last_block_pos.x + self.stand_offset then
+		go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, -220, go.EASING_LINEAR, 1.8)
+		go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, block_pos.x + self.stand_offset/2.5, go.EASING_LINEAR, 0.2)
+		go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 3, 0.3)
+
+		return false
+	end
+
+	return true
+end
+
+local BLOCK_TOWER_WIDTH = 110
+local BLOCK_TOWER_HEIGHT = 64
+local BLOCK_SPRITES = {"tower_block_1", "tower_block_2", "tower_block_3"}
+
 function init(self)
+	math.randomseed(os.time())
+	
+	sprite.play_flipbook("#sprite", BLOCK_SPRITES[math.random(1, 3)])
+
 	self.is_stand = false
+	self.stand_offset = (BLOCK_TOWER_WIDTH * _G.pixel_scale)/2
+	
 	self.position = go.get_position()
 	self.velocity = vmath.vector3(0, 0, 0)
-
 	self.gravity = 0
-
-	self.stand_offset = 90
 end
 
 function update(self, dt)
@@ -22,32 +49,30 @@ function on_message(self, message_id, message, sender)
 		self.gravity = -5
 	end
 
-	-- check stand
-	if message_id == hash("collision_response") and self.is_stand == false then
+	if message_id == hash("collision_response") and self.is_stand == false then -- check stand
+		local block_pos = go.get_position()
+		local last_block_pos = go.get_position(message.other_id)
+
 		self.is_stand = true
 		self.gravity = 0
-		self.velocity = go.get_position()
 
-		msg.post("/game_manager#game_manager", "tower_is_stand")
+		if not(#_G.tower_blocks == 1) then
+			go.set_position(vmath.vector3(block_pos.x, last_block_pos.y + (_G.pixel_scale * BLOCK_TOWER_HEIGHT), 0))
+		end
+
+		self.is_stand = check_and_start_tower_fall(self, block_pos, last_block_pos)
 
 		if not(message.other_id == hash("/roud")) then
-			local block_pos = go.get_position()
-			local last_block_pos = go.get_position(message.other_id)
-
-			-- if block position out of stand zone
-
-			-- left limit
-			if block_pos.x < last_block_pos.x - self.stand_offset then
-				go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, 90, go.EASING_LINEAR, 0.8)
-				go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, block_pos.x - self.stand_offset/2.5, go.EASING_LINEAR, 0.2)
-				go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 3, 0.3)
+			if block_pos.y <= go.get_position(_G.tower_blocks[#_G.tower_blocks-1]).y then
+				self.is_stand = check_and_start_tower_fall(self, block_pos, last_block_pos)
 			end
-			-- right limit
-			if block_pos.x > last_block_pos.x + self.stand_offset then
-				go.animate(".", "euler.z", go.PLAYBACK_ONCE_FORWARD, -90, go.EASING_LINEAR, 0.8)
-				go.animate(".", "position.x", go.PLAYBACK_ONCE_FORWARD, block_pos.x + self.stand_offset/2.5, go.EASING_LINEAR, 0.2)
-				go.animate(".", "position.y", go.PLAYBACK_ONCE_FORWARD, -1000, go.EASING_LINEAR, 3, 0.3)
-			end
+		end
+
+		if self.is_stand then
+			msg.post("/game_manager#game_manager", "tower_is_stand")
+		else
+			print("LOSE")
+			self.is_stand = true
 		end
 	end
 end

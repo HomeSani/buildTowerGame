@@ -1,5 +1,9 @@
 images {
-  image: "/assets/backgrounds/city_background.png"
+  image: "/assets/backgrounds/tower.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/assets/backgrounds/sky.png"
   sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 2
