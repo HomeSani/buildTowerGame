@@ -1,0 +1,20 @@
+function init(self)
+	msg.post("@render:", "clear_color", { color = vmath.vector4(104/255, 203/255, 255/255, 0) }) -- set bg color
+
+	local pixel_scale = 2.8
+	local start_pos = vmath.vector3(320, 230, 1)
+	local block_sprites = {"tower_block_1", "tower_block_2", "tower_block_3"}
+
+	math.randomseed(100000 * (socket.gettime() % 1))
+	
+	factory.create("/tower_factory#factory", start_pos, nil, nil, vmath.vector3(pixel_scale, pixel_scale, pixel_scale))
+	
+	for i = 1, 5 do
+		start_pos.x = start_pos.x + (50 * math.random(-1, 1))
+		start_pos.y = start_pos.y + 300
+
+		local block = factory.create("/tower_factory#factory", start_pos, nil, nil, vmath.vector3(pixel_scale, pixel_scale, pixel_scale))
+
+		sprite.play_flipbook(msg.url("menu", block, "sprite"), block_sprites[math.random(1, 3)])
+	end
+end
