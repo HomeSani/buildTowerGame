@@ -1,7 +1,20 @@
+local function save_bestscore(bestscore)
+	local filename = sys.get_save_file("sys_save_load", "bestscore")
+	sys.save(filename, { bestscore = bestscore })
+end
+
+local function load_bestscore()
+	local filename = sys.get_save_file("sys_save_load", "bestscore")
+	local data = sys.load(filename)
+	
+	return data.bestscore or 0
+end
+
 _G.tower_blocks = {}
 _G.pixel_scale = 2.4
 
 local score = 0
+local best_score = load_bestscore()
 local difficult = 1
 
 local CRAINE_HEIGHT = 123
@@ -31,7 +44,6 @@ end
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
 
 	math.randomseed(100000 * (socket.gettime() % 1))
 
@@ -100,5 +112,13 @@ function on_message(self, message_id, message, sender)
 		end
 				
 		msg.post("/gui", "update_score", {score = score})
+	end	
+
+	if message_id == hash("lose") then
+		-- run lose gui
+
+		if score > best_score then
+			save_bestscore(score)
+		end
 	end	
 end

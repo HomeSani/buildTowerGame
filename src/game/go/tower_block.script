@@ -69,7 +69,7 @@ function on_message(self, message_id, message, sender)
 		if self.is_stand then
 			msg.post("/game_manager#game_manager", "tower_is_stand")
 		else
-			print("LOSE")
+			msg.post("/game_manager#game_manager", "lose")
 			self.is_stand = true
 		end
 	end

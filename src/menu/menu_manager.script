@@ -1,3 +1,10 @@
+local function load_bestscore()
+	local filename = sys.get_save_file("sys_save_load", "bestscore")
+	local data = sys.load(filename)
+	
+	return data.bestscore or 0
+end
+
 function init(self)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(104/255, 203/255, 255/255, 0) }) -- set bg color
 
@@ -5,6 +12,9 @@ function init(self)
 	local start_pos = vmath.vector3(320, 230, 1)
 	local block_sprites = {"tower_block_1", "tower_block_2", "tower_block_3"}
 
+	local best_score = load_bestscore()
+	msg.post("/gui", "set_score", {best_score = best_score})
+	
 	math.randomseed(100000 * (socket.gettime() % 1))
 	
 	factory.create("/tower_factory#factory", start_pos, nil, nil, vmath.vector3(pixel_scale, pixel_scale, pixel_scale))
